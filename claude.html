@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARENA — The Ultimate Sports Universe</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,900;1,700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #050507;
+    --deep: #0a0a10;
+    --panel: #0f0f1a;
+    --border: #1e1e30;
+    --glow-football: #00ff87;
+    --glow-basketball: #ff6b2b;
+    --glow-cricket: #ffd700;
+    --glow-tennis: #00c8ff;
+    --glow-formula: #ff0055;
+    --glow-swimming: #7b2fff;
+    --text-white: #f0f0f8;
+    --text-dim: #888899;
+    --font-display: 'Black Han Sans', sans-serif;
+    --font-body: 'Barlow Condensed', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--text-white);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* ─── NOISE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: .35;
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--black); }
+  ::-webkit-scrollbar-thumb { background: var(--glow-football); border-radius: 2px; }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 48px;
+    background: rgba(5,5,7,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    letter-spacing: 6px;
+    color: var(--text-white);
+    text-transform: uppercase;
+    background: linear-gradient(90deg, #00ff87, #00c8ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .nav-links { display: flex; gap: 36px; }
+  .nav-links a {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color .2s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 1px;
+    background: var(--glow-football);
+    transition: width .3s;
+  }
+  .nav-links a:hover { color: var(--text-white); }
+  .nav-links a:hover::after { width: 100%; }
+
+  /* ─── HERO ─── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    padding: 120px 20px 80px;
+  }
+
+  .hero-bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,135,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,135,.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridShift 20s linear infinite;
+  }
+  @keyframes gridShift { to { background-position: 60px 60px; } }
+
+  .hero-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    animation: orbFloat 8s ease-in-out infinite alternate;
+  }
+  .orb1 { width: 500px; height: 500px; background: rgba(0,255,135,.12); top: -100px; left: -100px; }
+  .orb2 { width: 400px; height: 400px; background: rgba(0,200,255,.1); bottom: -80px; right: -80px; animation-delay: -4s; }
+  .orb3 { width: 300px; height: 300px; background: rgba(255,107,43,.08); top: 30%; left: 40%; animation-delay: -2s; }
+  @keyframes orbFloat { 0%{transform:translate(0,0) scale(1)} 100%{transform:translate(30px,-30px) scale(1.1)} }
+
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: .75rem;
+    letter-spacing: 6px;
+    color: var(--glow-football);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp .8s .3s forwards;
+  }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(5rem, 15vw, 14rem);
+    line-height: .88;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 2;
+    opacity: 0;
+    animation: fadeUp .8s .5s forwards;
+  }
+  .hero-title span.line1 { display: block; color: var(--text-white); }
+  .hero-title span.line2 {
+    display: block;
+    background: linear-gradient(90deg, #00ff87 0%, #00c8ff 50%, #ff6b2b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 100%;
+    animation: gradShift 4s ease-in-out infinite alternate, fadeUp .8s .5s forwards;
+  }
+  @keyframes gradShift { 0%{background-position:0%} 100%{background-position:100%} }
+
+  .hero-sub {
+    font-family: var(--font-body);
+    font-size: 1.25rem;
+    font-weight: 300;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    max-width: 600px;
+    margin: 28px auto 0;
+    opacity: 0;
+    animation: fadeUp .8s .8s forwards;
+  }
+
+  .hero-cta {
+    display: flex; gap: 16px; margin-top: 48px;
+    opacity: 0; animation: fadeUp .8s 1s forwards;
+    flex-wrap: wrap; justify-content: center;
+  }
+  .btn {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: .9rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 14px 36px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .3s;
+    display: inline-block;
+  }
+  .btn-primary {
+    background: var(--glow-football);
+    color: var(--black);
+    clip-path: polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+  }
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,255,135,.4); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-white);
+    border: 1px solid var(--border);
+    clip-path: polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+  }
+  .btn-ghost:hover { border-color: var(--glow-football); color: var(--glow-football); }
+
+  .hero-ticker {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: var(--glow-football);
+    padding: 10px 0;
+    overflow: hidden;
+  }
+  .ticker-inner {
+    display: flex;
+    gap: 80px;
+    animation: tickerRun 30s linear infinite;
+    white-space: nowrap;
+  }
+  @keyframes tickerRun { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+  .ticker-item {
+    font-family: var(--font-mono);
+    font-size: .72rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--black);
+    font-weight: 700;
+  }
+
+  @keyframes fadeUp { 0%{opacity:0;transform:translateY(30px)} 100%{opacity:1;transform:translateY(0)} }
+
+  /* ─── STATS STRIP ─── */
+  .stats-strip {
+    background: var(--panel);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 40px 48px;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .stat-item { text-align: center; }
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: 3.5rem;
+    color: var(--glow-football);
+    display: block;
+    line-height: 1;
+  }
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: .65rem;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-top: 6px;
+    display: block;
+  }
+
+  /* ─── SECTION SHARED ─── */
+  section { padding: 100px 48px; }
+  .section-header { margin-bottom: 64px; }
+  .section-tag {
+    font-family: var(--font-mono);
+    font-size: .7rem;
+    letter-spacing: 5px;
+    color: var(--glow-football);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 5rem);
+    text-transform: uppercase;
+    line-height: .92;
+    color: var(--text-white);
+  }
+  .section-title em {
+    font-style: normal;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 1px var(--text-white);
+  }
+
+  /* ─── SPORT CARDS ─── */
+  #sports { background: var(--black); }
+  .sports-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 2px;
+  }
+
+  .sport-card {
+    position: relative;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 0;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform .3s, box-shadow .3s;
+  }
+  .sport-card:hover {
+    transform: translateY(-6px) scale(1.01);
+    z-index: 10;
+  }
+
+  .card-header {
+    padding: 32px 32px 24px;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-icon {
+    font-size: 3.5rem;
+    display: block;
+    margin-bottom: 16px;
+    transition: transform .3s;
+  }
+  .sport-card:hover .card-icon { transform: scale(1.2) rotate(-5deg); }
+  .card-name {
+    font-family: var(--font-display);
+    font-size: 2.2rem;
+    text-transform: uppercase;
+    color: var(--text-white);
+    line-height: 1;
+  }
+  .card-origin {
+    font-family: var(--font-mono);
+    font-size: .65rem;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+  .card-glow-bar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    transform: scaleX(0);
+    transition: transform .4s;
+    transform-origin: left;
+  }
+  .sport-card:hover .card-glow-bar { transform: scaleX(1); }
+
+  .card-body { padding: 28px 32px; }
+  .card-tabs {
+    display: flex; gap: 0; margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tab-btn {
+    font-family: var(--font-mono);
+    font-size: .62rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    background: none;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: color .2s;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+  .tab-btn.active { color: var(--text-white); }
+  .tab-panel { display: none; animation: fadeIn .3s ease; }
+  .tab-panel.active { display: block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+  .info-list { list-style: none; }
+  .info-list li {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--text-dim);
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.5;
+  }
+  .info-list li::before {
+    content: '→';
+    color: var(--glow-football);
+    font-size: .8rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .player-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .player-chip {
+    font-family: var(--font-mono);
+    font-size: .65rem;
+    letter-spacing: 1px;
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    transition: all .2s;
+  }
+  .player-chip:hover { color: var(--text-white); }
+
+  .tournament-list { display: flex; flex-direction: column; gap: 8px; }
+  .tournament-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid var(--border);
+    transition: all .2s;
+  }
+  .tournament-item:hover { background: rgba(255,255,255,.07); }
+  .t-flag { font-size: 1.2rem; }
+  .t-name { font-size: .95rem; font-weight: 600; color: var(--text-white); }
+  .t-freq { font-family: var(--font-mono); font-size: .58rem; letter-spacing: 2px; color: var(--text-dim); margin-left: auto; text-transform: uppercase; }
+
+  .country-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .country-flag { font-size: 1.4rem; width: 28px; text-align: center; }
+  .country-name { font-size: .95rem; font-weight: 600; min-width: 100px; }
+  .bar-track { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 2px; transition: width 1.5s cubic-bezier(.16,1,.3,1); width: 0; }
+  .bar-pct { font-family: var(--font-mono); font-size: .6rem; letter-spacing: 1px; color: var(--text-dim); min-width: 32px; text-align: right; }
+
+  /* ─── LEGENDS SECTION ─── */
+  #legends { background: var(--deep); }
+  .legends-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+  }
+  .legend-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 28px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform .3s;
+  }
+  .legend-card:hover { transform: translateY(-6px); }
+  .legend-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .legend-emoji { font-size: 3rem; display: block; margin-bottom: 16px; }
+  .legend-name {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    text-transform: uppercase;
+    color: var(--text-white);
+    margin-bottom: 4px;
+  }
+  .legend-sport {
+    font-family: var(--font-mono);
+    font-size: .6rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .legend-country { font-size: .9rem; color: var(--text-dim); }
+  .legend-stat {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: .65rem;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    line-height: 1.6;
+  }
+  .legend-highlight {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  /* ─── QUIZ SECTION ─── */
+  #quiz { background: var(--black); }
+  .quiz-box {
+    max-width: 720px;
+    margin: 0 auto;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .quiz-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--glow-football), var(--glow-tennis), var(--glow-basketball));
+  }
+  .quiz-progress {
+    display: flex; gap: 6px; margin-bottom: 32px;
+  }
+  .quiz-dot {
+    flex: 1; height: 3px;
+    background: var(--border);
+    transition: background .3s;
+  }
+  .quiz-dot.done { background: var(--glow-football); }
+  .quiz-dot.active { background: var(--glow-tennis); animation: pulse 1s ease-in-out infinite alternate; }
+  @keyframes pulse { to{ opacity:.5; } }
+
+  .quiz-q {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    text-transform: uppercase;
+    color: var(--text-white);
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .quiz-meta {
+    font-family: var(--font-mono);
+    font-size: .62rem;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .quiz-opt {
+    background: rgba(255,255,255,.03);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-dim);
+    cursor: pointer;
+    text-align: left;
+    transition: all .2s;
+  }
+  .quiz-opt:hover:not(:disabled) { background: rgba(255,255,255,.08); color: var(--text-white); border-color: var(--glow-football); }
+  .quiz-opt.correct { background: rgba(0,255,135,.15); border-color: var(--glow-football); color: var(--glow-football); }
+  .quiz-opt.wrong { background: rgba(255,0,85,.15); border-color: var(--glow-formula); color: var(--glow-formula); }
+  .quiz-opt:disabled { cursor: default; }
+  .quiz-feedback {
+    margin-top: 20px;
+    padding: 14px 18px;
+    font-size: 1rem;
+    display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: rgba(0,255,135,.1); border-left: 3px solid var(--glow-football); color: var(--glow-football); }
+  .quiz-feedback.ko { background: rgba(255,0,85,.1); border-left: 3px solid var(--glow-formula); color: var(--glow-formula); }
+  .quiz-next {
+    margin-top: 24px;
+    display: none;
+  }
+  .quiz-next.show { display: inline-flex; }
+  #quiz-score {
+    text-align: center; display: none;
+  }
+  #quiz-score.show { display: block; }
+  .score-num {
+    font-family: var(--font-display);
+    font-size: 7rem;
+    color: var(--glow-football);
+    line-height: 1;
+    display: block;
+  }
+  .score-label {
+    font-family: var(--font-mono);
+    font-size: .7rem;
+    letter-spacing: 4px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  /* ─── TIMELINE ─── */
+  #history { background: var(--deep); }
+  .timeline {
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+    padding-left: 40px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--glow-football), var(--glow-tennis), var(--glow-basketball), transparent);
+  }
+  .tl-item {
+    position: relative;
+    padding: 0 0 48px 48px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity .6s, transform .6s;
+  }
+  .tl-item.visible { opacity: 1; transform: translateX(0); }
+  .tl-dot {
+    position: absolute;
+    left: -6px; top: 6px;
+    width: 13px; height: 13px;
+    border-radius: 50%;
+    border: 2px solid var(--black);
+  }
+  .tl-year {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    color: var(--glow-football);
+    margin-bottom: 4px;
+  }
+  .tl-event {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-white);
+    margin-bottom: 6px;
+  }
+  .tl-desc { font-size: .95rem; color: var(--text-dim); line-height: 1.5; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--deep);
+    border-top: 1px solid var(--border);
+    padding: 60px 48px 32px;
+    text-align: center;
+  }
+  .footer-logo {
+    font-family: var(--font-display);
+    font-size: 4rem;
+    letter-spacing: 10px;
+    background: linear-gradient(90deg, #00ff87, #00c8ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: block;
+    margin-bottom: 16px;
+  }
+  .footer-sub { font-size: .85rem; color: var(--text-dim); letter-spacing: 2px; margin-bottom: 40px; }
+  .footer-divider { height: 1px; background: var(--border); margin-bottom: 24px; }
+  .footer-copy { font-family: var(--font-mono); font-size: .62rem; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; }
+
+  /* ─── RESPONSIVE ─── */
+  @media(max-width:768px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    section { padding: 80px 20px; }
+    .stats-strip { padding: 32px 20px; }
+    .quiz-box { padding: 28px 20px; }
+    .quiz-options { grid-template-columns: 1fr; }
+    footer { padding: 40px 20px 24px; }
+    .sports-grid { grid-template-columns: 1fr; }
+  }
+
+  /* LIVE DOT */
+  .live-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--glow-formula);
+    margin-right: 6px;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 50%{opacity:0} }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">⚡ ARENA</span>
+  <div class="nav-links">
+    <a href="#sports">Sports</a>
+    <a href="#legends">Legends</a>
+    <a href="#history">History</a>
+    <a href="#quiz">Quiz</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg-grid"></div>
+  <div class="hero-orb orb1"></div>
+  <div class="hero-orb orb2"></div>
+  <div class="hero-orb orb3"></div>
+  <p class="hero-eyebrow"><span class="live-dot"></span> The Ultimate Sports Universe — est. 2024</p>
+  <h1 class="hero-title">
+    <span class="line1">WELCOME TO</span>
+    <span class="line2">ARENA</span>
+  </h1>
+  <p class="hero-sub">Rules · Tournaments · Legends · Records — Every sport, every story, all in one place.</p>
+  <div class="hero-cta">
+    <a href="#sports" class="btn btn-primary">Explore Sports</a>
+    <a href="#quiz" class="btn btn-ghost">Take the Quiz</a>
+  </div>
+  <div class="hero-ticker">
+    <div class="ticker-inner" id="ticker"></div>
+  </div>
+</section>
+
+<!-- STATS STRIP -->
+<div class="stats-strip">
+  <div class="stat-item"><span class="stat-num" data-target="6">0</span><span class="stat-label">Sports Covered</span></div>
+  <div class="stat-item"><span class="stat-num" data-target="200">0</span><span class="stat-label">Countries Playing</span></div>
+  <div class="stat-item"><span class="stat-num" data-target="5">0</span><span class="stat-label">Billion+ Fans</span></div>
+  <div class="stat-item"><span class="stat-num" data-target="1000">0</span><span class="stat-label">Tournaments / Year</span></div>
+  <div class="stat-item"><span class="stat-num" data-target="24">0</span><span class="stat-label">Hall of Fame Players</span></div>
+</div>
+
+<!-- SPORTS SECTION -->
+<section id="sports">
+  <div class="section-header">
+    <span class="section-tag">// Sports</span>
+    <h2 class="section-title">Choose Your <em>Arena</em></h2>
+  </div>
+  <div class="sports-grid" id="sports-grid"></div>
+</section>
+
+<!-- LEGENDS -->
+<section id="legends">
+  <div class="section-header">
+    <span class="section-tag">// Hall of Fame</span>
+    <h2 class="section-title">The <em>Legends</em></h2>
+  </div>
+  <div class="legends-grid" id="legends-grid"></div>
+</section>
+
+<!-- HISTORY TIMELINE -->
+<section id="history">
+  <div class="section-header">
+    <span class="section-tag">// Timeline</span>
+    <h2 class="section-title">Sports <em>History</em></h2>
+  </div>
+  <div class="timeline" id="timeline"></div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-header">
+    <span class="section-tag">// Test Yourself</span>
+    <h2 class="section-title">Sports <em>Quiz</em></h2>
+  </div>
+  <div class="quiz-box">
+    <div id="quiz-content">
+      <div class="quiz-progress" id="quiz-progress"></div>
+      <p class="quiz-q" id="quiz-question"></p>
+      <p class="quiz-meta" id="quiz-meta"></p>
+      <div class="quiz-options" id="quiz-options"></div>
+      <div class="quiz-feedback" id="quiz-feedback"></div>
+      <button class="btn btn-primary quiz-next" id="quiz-next-btn">Next →</button>
+    </div>
+    <div id="quiz-score">
+      <span class="score-num" id="score-num">0</span>
+      <span class="score-label">out of 8 correct</span>
+      <p id="score-msg" style="margin-top:20px;color:var(--text-dim);font-size:1.1rem;"></p>
+      <button class="btn btn-primary" style="margin-top:28px;" onclick="initQuiz()">Play Again</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">ARENA</span>
+  <p class="footer-sub">Your home for sports knowledge</p>
+  <div class="footer-divider"></div>
+  <p class="footer-copy">© 2024 Arena Sports Platform · All records and stats for informational purposes</p>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════════════════
+
+const SPORTS_DATA = [
+  {
+    id: 'football',
+    name: 'Football',
+    icon: '⚽',
+    color: '#00ff87',
+    origin: 'England · 1863',
+    rules: [
+      '11 players per team on the field',
+      'Match: 2 × 45 min halves + stoppage time',
+      'Goal scored when ball fully crosses the line',
+      'No hands for outfield players (except throw-ins)',
+      'Yellow card = warning; Red card = ejection',
+      'Offside: attacker ahead of second-last defender when ball played',
+      'Penalty kick from 11m if foul in own box',
+    ],
+    tournaments: [
+      { flag:'🌍', name:'FIFA World Cup', freq:'Every 4 years' },
+      { flag:'🏆', name:'UEFA Champions League', freq:'Annual' },
+      { flag:'🇬🇧', name:'English Premier League', freq:'Annual' },
+      { flag:'🇪🇸', name:'La Liga', freq:'Annual' },
+      { flag:'🇧🇷', name:'Copa América', freq:'Every 4 years' },
+    ],
+    players: ['Lionel Messi 🇦🇷','Cristiano Ronaldo 🇵🇹','Pelé 🇧🇷','Ronaldinho 🇧🇷','Mbappé 🇫🇷','Haaland 🇳🇴','Zidane 🇫🇷','Maradona 🇦🇷'],
+    popularity: [
+      { flag:'🇧🇷', name:'Brazil', pct:98 },
+      { flag:'🇦🇷', name:'Argentina', pct:97 },
+      { flag:'🇩🇪', name:'Germany', pct:93 },
+      { flag:'🇬🇧', name:'England', pct:90 },
+      { flag:'🇫🇷', name:'France', pct:88 },
+    ],
+  },
+  {
+    id: 'basketball',
+    name: 'Basketball',
+    icon: '🏀',
+    color: '#ff6b2b',
+    origin: 'USA · 1891',
+    rules: [
+      '5 players per team on court',
+      'Game: 4 quarters of 12 min (NBA) / 10 min (FIBA)',
+      '3-point line: shots beyond arc score 3',
+      '24-second shot clock in NBA; 14s after offensive rebound',
+      'Foul out rule: 6 fouls in NBA, 5 in FIBA',
+      'Free throws awarded after certain fouls',
+      'No backcourt violation once ball crosses half-court',
+    ],
+    tournaments: [
+      { flag:'🇺🇸', name:'NBA Finals', freq:'Annual' },
+      { flag:'🌏', name:'FIBA World Cup', freq:'Every 4 years' },
+      { flag:'🏅', name:'Olympic Games', freq:'Every 4 years' },
+      { flag:'🇪🇺', name:'EuroBasket', freq:'Every 2 years' },
+      { flag:'🇺🇸', name:'NCAA March Madness', freq:'Annual' },
+    ],
+    players: ['Michael Jordan 🇺🇸','LeBron James 🇺🇸','Kobe Bryant 🇺🇸','Magic Johnson 🇺🇸','Shaquille O\'Neal 🇺🇸','Nikola Jokić 🇷🇸','Giannis 🇬🇷','Wilt Chamberlain 🇺🇸'],
+    popularity: [
+      { flag:'🇺🇸', name:'USA', pct:95 },
+      { flag:'🇵🇭', name:'Philippines', pct:85 },
+      { flag:'🇨🇳', name:'China', pct:78 },
+      { flag:'🇷🇸', name:'Serbia', pct:70 },
+      { flag:'🇫🇷', name:'France', pct:65 },
+    ],
+  },
+  {
+    id: 'cricket',
+    name: 'Cricket',
+    icon: '🏏',
+    color: '#ffd700',
+    origin: 'England · 16th C',
+    rules: [
+      '11 players per side; innings-based match',
+      'Formats: Test (5 days), ODI (50 overs), T20 (20 overs)',
+      'Batsman out by: bowled, caught, run-out, LBW, stumped',
+      'LBW: ball hits leg in front of stumps on a straight line',
+      'No-ball and wide deliveries bowled again (free hit in T20)',
+      'Duckworth-Lewis-Stern method for rain interruptions',
+      'Powerplay: fielding restrictions in first 10 overs (ODI)',
+    ],
+    tournaments: [
+      { flag:'🌍', name:'ICC Cricket World Cup', freq:'Every 4 years' },
+      { flag:'⚡', name:'ICC T20 World Cup', freq:'Every 2 years' },
+      { flag:'🏺', name:'The Ashes', freq:'Every 2 years' },
+      { flag:'🇮🇳', name:'Indian Premier League (IPL)', freq:'Annual' },
+      { flag:'🏆', name:'ICC Champions Trophy', freq:'Every 4 years' },
+    ],
+    players: ['Sachin Tendulkar 🇮🇳','Virat Kohli 🇮🇳','Brian Lara 🇹🇹','Viv Richards 🇦🇬','Ricky Ponting 🇦🇺','MS Dhoni 🇮🇳','Shane Warne 🇦🇺','WG Grace 🇬🇧'],
+    popularity: [
+      { flag:'🇮🇳', name:'India', pct:99 },
+      { flag:'🇵🇰', name:'Pakistan', pct:96 },
+      { flag:'🇧🇩', name:'Bangladesh', pct:92 },
+      { flag:'🇱🇰', name:'Sri Lanka', pct:88 },
+      { flag:'🇦🇺', name:'Australia', pct:75 },
+    ],
+  },
+  {
+    id: 'tennis',
+    name: 'Tennis',
+    icon: '🎾',
+    color: '#00c8ff',
+    origin: 'France · 12th C',
+    rules: [
+      'Singles: 1v1; Doubles: 2v2',
+      'Points: Love, 15, 30, 40, Game (Deuce at 40-40)',
+      'Set won with 6 games (2 clear); match = best of 3 or 5',
+      'Tiebreak at 6-6 in most sets (first to 7, win by 2)',
+      'Let: serve hits net and lands in = re-served',
+      'Two serves allowed; double fault = point lost',
+      'Ball must bounce once before return (except volley)',
+    ],
+    tournaments: [
+      { flag:'🇫🇷', name:'Roland Garros (Clay)', freq:'Annual' },
+      { flag:'🇬🇧', name:'Wimbledon (Grass)', freq:'Annual' },
+      { flag:'🇦🇺', name:'Australian Open', freq:'Annual' },
+      { flag:'🇺🇸', name:'US Open (Hard)', freq:'Annual' },
+      { flag:'🏆', name:'ATP Finals / WTA Finals', freq:'Annual' },
+    ],
+    players: ['Roger Federer 🇨🇭','Rafael Nadal 🇪🇸','Novak Djokovic 🇷🇸','Serena Williams 🇺🇸','Steffi Graf 🇩🇪','Pete Sampras 🇺🇸','Martina Navratilova 🇺🇸','Carlos Alcaraz 🇪🇸'],
+    popularity: [
+      { flag:'🇺🇸', name:'USA', pct:80 },
+      { flag:'🇪🇸', name:'Spain', pct:85 },
+      { flag:'🇫🇷', name:'France', pct:80 },
+      { flag:'🇦🇺', name:'Australia', pct:75 },
+      { flag:'🇷🇸', name:'Serbia', pct:78 },
+    ],
+  },
+  {
+    id: 'formula1',
+    name: 'Formula 1',
+    icon: '🏎️',
+    color: '#ff0055',
+    origin: 'UK/Europe · 1950',
+    rules: [
+      'Drivers compete over 20-24 Grand Prix per season',
+      'Points: 25-18-15-12-10-8-6-4-2-1 for top 10',
+      'Bonus point for fastest lap (if in top 10)',
+      'Pit stops mandatory — at least 1 tyre compound change',
+      'DRS (Drag Reduction System) used in designated zones',
+      'Safety car deployed during accidents or debris',
+      'Parc fermé: no major car changes post-qualifying',
+    ],
+    tournaments: [
+      { flag:'🏆', name:'F1 World Championship', freq:'Annual — 24 races' },
+      { flag:'🇲🇨', name:'Monaco Grand Prix', freq:'Annual (Iconic)' },
+      { flag:'🇮🇹', name:'Italian GP — Monza', freq:'Annual' },
+      { flag:'🇬🇧', name:'British GP — Silverstone', freq:'Annual' },
+      { flag:'🇦🇺', name:'Australian GP — Melbourne', freq:'Season opener' },
+    ],
+    players: ['Michael Schumacher 🇩🇪','Ayrton Senna 🇧🇷','Lewis Hamilton 🇬🇧','Max Verstappen 🇳🇱','Alain Prost 🇫🇷','Niki Lauda 🇦🇹','Sebastian Vettel 🇩🇪','Charles Leclerc 🇲🇨'],
+    popularity: [
+      { flag:'🇮🇹', name:'Italy', pct:90 },
+      { flag:'🇬🇧', name:'UK', pct:86 },
+      { flag:'🇩🇪', name:'Germany', pct:82 },
+      { flag:'🇳🇱', name:'Netherlands', pct:88 },
+      { flag:'🇧🇷', name:'Brazil', pct:80 },
+    ],
+  },
+  {
+    id: 'swimming',
+    name: 'Swimming',
+    icon: '🏊',
+    color: '#7b2fff',
+    origin: 'Germany · 1896',
+    rules: [
+      '4 strokes: Freestyle, Backstroke, Breaststroke, Butterfly',
+      'Individual Medley (IM): all 4 strokes in one race',
+      'False start = disqualification',
+      'Touch pad must be touched at finish in correct position',
+      'No obstruction of other swimmers in shared lanes',
+      'Relay: next swimmer cannot start before hand touch',
+      'Swimsuit regulations: coverage and buoyancy limits',
+    ],
+    tournaments: [
+      { flag:'🏅', name:'Olympic Games', freq:'Every 4 years' },
+      { flag:'🌍', name:'World Aquatics Championships', freq:'Every 2 years' },
+      { flag:'🏆', name:'World Short Course Championships', freq:'Every 2 years' },
+      { flag:'🇺🇸', name:'US Swimming Trials', freq:'Every 4 years' },
+      { flag:'🌊', name:'FINA Champions Swim Series', freq:'Annual' },
+    ],
+    players: ['Michael Phelps 🇺🇸','Katie Ledecky 🇺🇸','Ian Thorpe 🇦🇺','Mark Spitz 🇺🇸','Caeleb Dressel 🇺🇸','Adam Peaty 🇬🇧','Kristin Otto 🇩🇪','Sarah Sjöström 🇸🇪'],
+    popularity: [
+      { flag:'🇺🇸', name:'USA', pct:88 },
+      { flag:'🇦🇺', name:'Australia', pct:90 },
+      { flag:'🇨🇳', name:'China', pct:72 },
+      { flag:'🇬🇧', name:'UK', pct:65 },
+      { flag:'🇳🇱', name:'Netherlands', pct:70 },
+    ],
+  },
+];
+
+const LEGENDS = [
+  { name:'Pelé', sport:'Football', country:'🇧🇷 Brazil', emoji:'⚽', color:'#00ff87', stat:'3', statLabel:'World Cups Won', detail:'Only player to win 3 FIFA World Cups' },
+  { name:'Michael Jordan', sport:'Basketball', country:'🇺🇸 USA', emoji:'🏀', color:'#ff6b2b', stat:'6', statLabel:'NBA Championships', detail:'6× NBA Finals MVP, 5× MVP' },
+  { name:'Sachin Tendulkar', sport:'Cricket', country:'🇮🇳 India', emoji:'🏏', color:'#ffd700', stat:'100', statLabel:'Int\'l Centuries', detail:'First to 100 international centuries' },
+  { name:'Roger Federer', sport:'Tennis', country:'🇨🇭 Switzerland', emoji:'🎾', color:'#00c8ff', stat:'20', statLabel:'Grand Slams', detail:'Held World No.1 for 310 weeks' },
+  { name:'Michael Schumacher', sport:'Formula 1', country:'🇩🇪 Germany', emoji:'🏎️', color:'#ff0055', stat:'7', statLabel:'WDC Titles', detail:'Record 7 World Driver Championships' },
+  { name:'Michael Phelps', sport:'Swimming', country:'🇺🇸 USA', emoji:'🏊', color:'#7b2fff', stat:'23', statLabel:'Olympic Golds', detail:'Most Olympic medals ever — 28 total' },
+  { name:'Serena Williams', sport:'Tennis', country:'🇺🇸 USA', emoji:'🎾', color:'#00c8ff', stat:'23', statLabel:'Grand Slams', detail:'Dominant across 3 decades of tennis' },
+  { name:'Ayrton Senna', sport:'Formula 1', country:'🇧🇷 Brazil', emoji:'🏎️', color:'#ff0055', stat:'3', statLabel:'WDC Titles', detail:'Widely regarded as greatest F1 racer' },
+];
+
+const TIMELINE = [
+  { year:'776 BC', event:'Ancient Olympics', desc:'First recorded Olympic Games in Olympia, Greece — athletic competition as religious tradition.', color:'#ffd700' },
+  { year:'1863', event:'Football\'s Official Birth', desc:'The Football Association formed in England, writing the first unified rules of the game.', color:'#00ff87' },
+  { year:'1896', event:'Modern Olympics Begin', desc:'First modern Olympic Games held in Athens, Greece, featuring 43 events across 9 sports.', color:'#00c8ff' },
+  { year:'1930', event:'First FIFA World Cup', desc:'Uruguay hosted and won the inaugural FIFA World Cup. 13 teams competed.', color:'#00ff87' },
+  { year:'1946', event:'NBA Founded', desc:'The Basketball Association of America (later NBA) founded with 11 teams.', color:'#ff6b2b' },
+  { year:'1950', event:'F1 World Championship', desc:'First official Formula 1 season. Giuseppe Farina of Italy wins the inaugural title.', color:'#ff0055' },
+  { year:'1975', event:'First Cricket World Cup', desc:'West Indies beat Australia in the inaugural ICC Cricket World Cup at Lord\'s.', color:'#ffd700' },
+  { year:'2008', event:'Phelps\' 8 Golds', desc:'Michael Phelps wins 8 gold medals at the Beijing Olympics — the most in a single Games.', color:'#7b2fff' },
+  { year:'2012', event:'Bolt\'s Sprint Legend', desc:'Usain Bolt defends 100m & 200m sprint titles at London Olympics, cementing his legacy.', color:'#00c8ff' },
+  { year:'2022', event:'Messi\'s World Cup', desc:'Lionel Messi finally lifts the FIFA World Cup with Argentina in Qatar, completing his legacy.', color:'#00ff87' },
+];
+
+const QUIZ = [
+  { q:'How many players are in a football team on the field?', sport:'Football', opts:['9','11','10','13'], correct:1, exp:'Each football team fields exactly 11 players.' },
+  { q:'Which country has won the most FIFA World Cups?', sport:'Football', opts:['Germany','Italy','Brazil','Argentina'], correct:2, exp:'Brazil has won 5 World Cups — the most of any nation.' },
+  { q:'How many Olympic gold medals did Michael Phelps win in total?', sport:'Swimming', opts:['18','23','16','20'], correct:1, exp:'Phelps won 23 Olympic golds across Athens, Beijing, London & Rio.' },
+  { q:'What is the maximum score in a single over in cricket?', sport:'Cricket', opts:['24','36','30','42'], correct:1, exp:'6 balls × 6 runs each = 36. Six 6s in an over — achieved by Yuvraj Singh (T20 WC 2007).' },
+  { q:'Who holds the record for most F1 World Driver Championships?', sport:'Formula 1', opts:['Ayrton Senna','Lewis Hamilton','Michael Schumacher & Hamilton','Alain Prost'], correct:2, exp:'Both Lewis Hamilton and Michael Schumacher share the record with 7 titles each.' },
+  { q:'How many points does a 3-pointer score in basketball?', sport:'Basketball', opts:['2','3','4','1'], correct:1, exp:'Shots made beyond the 3-point arc score 3 points.' },
+  { q:'How many Grand Slam titles did Roger Federer win?', sport:'Tennis', opts:['18','20','22','17'], correct:1, exp:'Roger Federer won 20 Grand Slam singles titles before retiring in 2022.' },
+  { q:'Which city hosted the 2022 FIFA World Cup?', sport:'Football', opts:['Dubai','Riyadh','Doha','Abu Dhabi'], correct:2, exp:'Qatar hosted the 2022 FIFA World Cup — first in the Middle East. Doha was the host city.' },
+];
+
+// ═══════════════════════════════════════════════════════
+//  TICKER
+// ═══════════════════════════════════════════════════════
+const tickerMsgs = [
+  '⚽ Messi — 8× Ballon d\'Or','🏀 LeBron James — 40,000+ NBA Points','🏏 Sachin Tendulkar — 100 International Centuries',
+  '🎾 Djokovic — 24 Grand Slams','🏎️ Hamilton — 7× F1 World Champion','🏊 Phelps — 23 Olympic Golds',
+  '🥇 Usain Bolt — 9.58s World Record 100m','⚽ Ronaldo — 900+ Career Goals','🏏 IPL 2024 — Biggest T20 League on Earth',
+  '🏀 NBA 2024 Finals — Record Viewership','🎾 Wimbledon — Oldest Grand Slam Since 1877','🏎️ Verstappen — Red Bull Dominance',
+];
+const ticker = document.getElementById('ticker');
+const allItems = [...tickerMsgs, ...tickerMsgs];
+ticker.innerHTML = allItems.map(t => `<span class="ticker-item">${t}</span>`).join('');
+
+// ═══════════════════════════════════════════════════════
+//  SPORT CARDS
+// ═══════════════════════════════════════════════════════
+function buildCard(sport) {
+  const card = document.createElement('div');
+  card.className = 'sport-card';
+  card.style.setProperty('--accent', sport.color);
+
+  card.innerHTML = `
+    <div class="card-header">
+      <span class="card-icon">${sport.icon}</span>
+      <h3 class="card-name" style="color:${sport.color}">${sport.name}</h3>
+      <p class="card-origin">${sport.origin}</p>
+      <div class="card-glow-bar" style="background:${sport.color}"></div>
+    </div>
+    <div class="card-body">
+      <div class="card-tabs">
+        <button class="tab-btn active" onclick="switchTab(this,'rules-${sport.id}')" style="--tc:${sport.color}">Rules</button>
+        <button class="tab-btn" onclick="switchTab(this,'tournaments-${sport.id}')" style="--tc:${sport.color}">Tournaments</button>
+        <button class="tab-btn" onclick="switchTab(this,'players-${sport.id}')" style="--tc:${sport.color}">Players</button>
+        <button class="tab-btn" onclick="switchTab(this,'popularity-${sport.id}')" style="--tc:${sport.color}">Popularity</button>
+      </div>
+      <div id="rules-${sport.id}" class="tab-panel active">
+        <ul class="info-list">
+          ${sport.rules.map(r=>`<li>${r}</li>`).join('')}
+        </ul>
+      </div>
+      <div id="tournaments-${sport.id}" class="tab-panel">
+        <div class="tournament-list">
+          ${sport.tournaments.map(t=>`
+            <div class="tournament-item">
+              <span class="t-flag">${t.flag}</span>
+              <span class="t-name">${t.name}</span>
+              <span class="t-freq">${t.freq}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+      <div id="players-${sport.id}" class="tab-panel">
+        <div class="player-chips">
+          ${sport.players.map(p=>`<span class="player-chip" style="border-color:${sport.color}30">${p}</span>`).join('')}
+        </div>
+      </div>
+      <div id="popularity-${sport.id}" class="tab-panel">
+        ${sport.popularity.map(c=>`
+          <div class="country-bar">
+            <span class="country-flag">${c.flag}</span>
+            <span class="country-name">${c.name}</span>
+            <div class="bar-track"><div class="bar-fill" style="background:${sport.color}" data-pct="${c.pct}"></div></div>
+            <span class="bar-pct">${c.pct}%</span>
+          </div>`).join('')}
+      </div>
+    </div>`;
+
+  // tab active color
+  card.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('mouseenter',()=>{btn.style.borderBottomColor=sport.color; btn.style.color=sport.color;});
+    btn.addEventListener('mouseleave',()=>{if(!btn.classList.contains('active')){btn.style.borderBottomColor='transparent';btn.style.color='';}});
+  });
+
+  return card;
+}
+
+const sportsGrid = document.getElementById('sports-grid');
+SPORTS_DATA.forEach(s => sportsGrid.appendChild(buildCard(s)));
+
+function switchTab(btn, panelId) {
+  const card = btn.closest('.sport-card');
+  card.querySelectorAll('.tab-btn').forEach(b=>{
+    b.classList.remove('active');
+    b.style.borderBottomColor='transparent';
+    b.style.color='';
+  });
+  card.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  const accentColor = btn.style.getPropertyValue('--tc');
+  btn.style.borderBottomColor = accentColor;
+  btn.style.color = accentColor;
+  const panel = document.getElementById(panelId);
+  panel.classList.add('active');
+  // animate bars
+  panel.querySelectorAll('.bar-fill').forEach(bar=>{
+    bar.style.width = bar.dataset.pct + '%';
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  LEGENDS
+// ═══════════════════════════════════════════════════════
+const legendsGrid = document.getElementById('legends-grid');
+LEGENDS.forEach(l=>{
+  const card = document.createElement('div');
+  card.className = 'legend-card';
+  card.style.setProperty('--lc', l.color);
+  card.innerHTML = `
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:${l.color}"></div>
+    <span class="legend-emoji">${l.emoji}</span>
+    <h3 class="legend-name">${l.name}</h3>
+    <p class="legend-sport" style="color:${l.color}">${l.sport}</p>
+    <p class="legend-country">${l.country}</p>
+    <div class="legend-stat">
+      <span class="legend-highlight" style="color:${l.color}">${l.stat}</span>
+      ${l.statLabel}<br><br>
+      <span style="font-size:.75rem;font-family:'Barlow Condensed',sans-serif;color:var(--text-dim);font-style:italic">${l.detail}</span>
+    </div>`;
+  legendsGrid.appendChild(card);
+});
+
+// ═══════════════════════════════════════════════════════
+//  TIMELINE
+// ═══════════════════════════════════════════════════════
+const tlEl = document.getElementById('timeline');
+TIMELINE.forEach(item=>{
+  const el = document.createElement('div');
+  el.className = 'tl-item';
+  el.innerHTML = `
+    <div class="tl-dot" style="background:${item.color}"></div>
+    <p class="tl-year" style="color:${item.color}">${item.year}</p>
+    <p class="tl-event">${item.event}</p>
+    <p class="tl-desc">${item.desc}</p>`;
+  tlEl.appendChild(el);
+});
+
+const tlObserver = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: .15 });
+document.querySelectorAll('.tl-item').forEach(el=>tlObserver.observe(el));
+
+// ═══════════════════════════════════════════════════════
+//  QUIZ
+// ═══════════════════════════════════════════════════════
+let qIdx=0, score=0, answered=false;
+const shuffled = [...QUIZ].sort(()=>Math.random()-.5);
+
+function initQuiz(){
+  qIdx=0; score=0; answered=false;
+  const shuffled2 = [...QUIZ].sort(()=>Math.random()-.5);
+  shuffled.splice(0,shuffled.length,...shuffled2);
+  document.getElementById('quiz-score').classList.remove('show');
+  document.getElementById('quiz-content').style.display='block';
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const q = shuffled[qIdx];
+  answered = false;
+  // progress
+  const prog = document.getElementById('quiz-progress');
+  prog.innerHTML = shuffled.map((_,i)=>`<div class="quiz-dot ${i<qIdx?'done':i===qIdx?'active':''}"></div>`).join('');
+  document.getElementById('quiz-question').textContent = q.q;
+  document.getElementById('quiz-meta').textContent = `📌 ${q.sport} · Question ${qIdx+1} of ${shuffled.length}`;
+  const opts = document.getElementById('quiz-options');
+  opts.innerHTML = q.opts.map((o,i)=>`<button class="quiz-opt" onclick="answerQ(${i})">${o}</button>`).join('');
+  const fb = document.getElementById('quiz-feedback');
+  fb.className = 'quiz-feedback';
+  fb.textContent = '';
+  const nb = document.getElementById('quiz-next-btn');
+  nb.className = 'btn btn-primary quiz-next';
+  nb.onclick = nextQuestion;
+}
+
+function answerQ(idx){
+  if(answered) return;
+  answered = true;
+  const q = shuffled[qIdx];
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach(o=>o.disabled=true);
+  opts[q.correct].classList.add('correct');
+  const fb = document.getElementById('quiz-feedback');
+  if(idx===q.correct){
+    score++;
+    fb.className='quiz-feedback show ok';
+    fb.textContent = '✓ Correct! ' + q.exp;
+  } else {
+    opts[idx].classList.add('wrong');
+    fb.className='quiz-feedback show ko';
+    fb.textContent = '✗ ' + q.exp;
+  }
+  document.getElementById('quiz-next-btn').classList.add('show');
+}
+
+function nextQuestion(){
+  qIdx++;
+  if(qIdx >= shuffled.length){
+    document.getElementById('quiz-content').style.display='none';
+    document.getElementById('quiz-score').classList.add('show');
+    document.getElementById('score-num').textContent = score;
+    const msgs = ['Keep practicing! Every champ started somewhere.','Not bad! You know your sports.','Impressive knowledge!','🏆 LEGEND STATUS. You crushed it!'];
+    const msgIdx = score<=2?0:score<=4?1:score<=6?2:3;
+    document.getElementById('score-msg').textContent = msgs[msgIdx];
+    return;
+  }
+  renderQuestion();
+}
+
+initQuiz();
+
+// ═══════════════════════════════════════════════════════
+//  COUNTER ANIMATION
+// ═══════════════════════════════════════════════════════
+const counterObserver = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const el = e.target;
+      const target = +el.dataset.target;
+      const dur = 1800;
+      const step = target / (dur/16);
+      let cur = 0;
+      const timer = setInterval(()=>{
+        cur += step;
+        if(cur>=target){ el.textContent=target; clearInterval(timer); return; }
+        el.textContent = Math.floor(cur);
+      }, 16);
+      counterObserver.unobserve(el);
+    }
+  });
+}, {threshold:.5});
+document.querySelectorAll('[data-target]').forEach(el=>counterObserver.observe(el));
+
+// ═══════════════════════════════════════════════════════
+//  INITIAL BAR ANIMATION ON SCROLL
+// ═══════════════════════════════════════════════════════
+const barObserver = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.querySelectorAll('.bar-fill').forEach(bar=>{ bar.style.width = bar.dataset.pct + '%'; });
+    }
+  });
+},{threshold:.3});
+document.querySelectorAll('.tab-panel.active').forEach(p=>barObserver.observe(p));
+</script>
+</body>
+</html>

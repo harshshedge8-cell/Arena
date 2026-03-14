@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SportsVerse Pro</title>
+
+<link rel="stylesheet" href="chat.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+
+</head>
+
+
+<body>
+
+<header>
+
+<h1>SportsVerse Pro</h1>
+
+<nav>
+<a href="#sports">Sports</a>
+<a href="#world">World Popularity</a>
+<a href="#timeline">Tournaments</a>
+<a href="#quiz">Quiz</a>
+<a href="#leaderboard">Leaderboard</a>
+</nav>
+
+</header>
+
+
+<section class="hero">
+
+<h2>The Ultimate Sports Intelligence Platform</h2>
+
+<p>Explore sports data, players, tournaments, and global popularity.</p>
+
+</section>
+
+
+
+<section id="sports" class="sports-section">
+
+<h2>Sports</h2>
+
+<div id="sportsGrid" class="grid"></div>
+
+</section>
+
+
+
+<section class="panel" id="infoPanel">
+
+<h2 id="sportTitle"></h2>
+
+<p id="rules"></p>
+
+<h3>Tournaments</h3>
+<p id="tournaments"></p>
+
+<h3>Popular Countries</h3>
+<p id="countries"></p>
+
+<h3>Top Players</h3>
+<div id="players" class="players"></div>
+
+</section>
+
+
+
+<section id="world">
+
+<h2>Global Sports Popularity</h2>
+
+<canvas id="popularityChart"></canvas>
+
+</section>
+
+
+
+<section id="timeline">
+
+<h2>Major Tournament Timeline</h2>
+
+<input type="range" min="0" max="3" value="0" id="timelineSlider">
+
+<div id="timelineContent"></div>
+
+</section>
+
+
+
+<section id="threejs">
+
+<h2>3D Sports Ball</h2>
+
+<div id="canvasContainer"></div>
+
+</section>
+
+
+
+<section id="quiz">
+
+<h2>Sports Quiz</h2>
+
+<p id="question"></p>
+
+<div id="answers"></div>
+
+<p id="result"></p>
+
+</section>
+
+
+
+<section id="leaderboard">
+
+<h2>Leaderboard</h2>
+
+<table>
+
+<thead>
+<tr>
+<th>Player</th>
+<th>Points</th>
+</tr>
+</thead>
+
+<tbody id="leaderboardTable"></tbody>
+
+</table>
+
+</section>
+
+
+
+<footer>
+
+<p>SportsVerse Pro © 2026</p>
+
+</footer>
+
+<script src="cha.js"></script>
+
+</body>
+
+</html>
+

@@ -1,0 +1,452 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SportsVerse</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+/* ---------- GLOBAL ---------- */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:linear-gradient(120deg,#141e30,#243b55);
+color:white;
+min-height:100vh;
+transition:0.4s;
+}
+
+.light{
+background:white;
+color:black;
+}
+
+/* ---------- NAVBAR ---------- */
+
+nav{
+display:flex;
+justify-content:space-between;
+padding:20px 60px;
+align-items:center;
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(10px);
+}
+
+.logo{
+font-size:28px;
+font-weight:bold;
+color:#00e5ff;
+}
+
+.controls{
+display:flex;
+gap:20px;
+}
+
+input{
+padding:8px;
+border-radius:6px;
+border:none;
+}
+
+/* ---------- HERO ---------- */
+
+.hero{
+text-align:center;
+padding:60px 20px;
+}
+
+.hero h1{
+font-size:55px;
+background:linear-gradient(90deg,#00e5ff,#00ffa6);
+-webkit-background-clip:text;
+color:transparent;
+}
+
+/* ---------- GRID ---------- */
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:25px;
+padding:40px;
+}
+
+.card{
+background:rgba(255,255,255,0.08);
+padding:30px;
+border-radius:20px;
+text-align:center;
+cursor:pointer;
+transition:0.4s;
+}
+
+.card:hover{
+transform:rotateY(10deg) scale(1.05);
+background:rgba(255,255,255,0.2);
+}
+
+/* ---------- INFO PANEL ---------- */
+
+.panel{
+width:80%;
+margin:auto;
+background:rgba(0,0,0,0.3);
+padding:30px;
+border-radius:15px;
+display:none;
+}
+
+.section{
+margin-top:15px;
+}
+
+.players{
+display:flex;
+gap:15px;
+flex-wrap:wrap;
+margin-top:10px;
+}
+
+.player{
+background:#111;
+padding:10px 15px;
+border-radius:10px;
+}
+
+/* ---------- QUIZ ---------- */
+
+.quiz{
+width:60%;
+margin:auto;
+margin-top:50px;
+background:rgba(255,255,255,0.1);
+padding:30px;
+border-radius:15px;
+}
+
+button{
+padding:8px 15px;
+margin:5px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+background:#00e5ff;
+}
+
+/* ---------- CHART ---------- */
+
+.chart{
+width:70%;
+margin:auto;
+margin-top:60px;
+}
+
+/* ---------- FOOTER ---------- */
+
+footer{
+text-align:center;
+padding:25px;
+margin-top:50px;
+background:rgba(255,255,255,0.05);
+}
+
+</style>
+
+</head>
+
+<body>
+
+<nav>
+
+<div class="logo">SportsVerse</div>
+
+<div class="controls">
+<input type="text" id="search" placeholder="Search sport..." onkeyup="searchSport()">
+<button onclick="toggleTheme()">Theme</button>
+</div>
+
+</nav>
+
+
+<section class="hero">
+
+<h1>Explore The World of Sports</h1>
+<p>Rules • Tournaments • Players • Countries</p>
+
+</section>
+
+
+<!-- SPORTS GRID -->
+
+<div class="grid" id="sportsGrid"></div>
+
+
+<!-- INFO PANEL -->
+
+<div class="panel" id="panel">
+
+<h2 id="title"></h2>
+
+<div class="section">
+<b>Rules:</b>
+<p id="rules"></p>
+</div>
+
+<div class="section">
+<b>Tournaments:</b>
+<p id="tournaments"></p>
+</div>
+
+<div class="section">
+<b>Popular Countries:</b>
+<p id="countries"></p>
+</div>
+
+<div class="section">
+
+<b>Top Players:</b>
+
+<div class="players" id="players"></div>
+
+</div>
+
+</div>
+
+
+<!-- CHART -->
+
+<div class="chart">
+<canvas id="chart"></canvas>
+</div>
+
+
+<!-- QUIZ -->
+
+<div class="quiz">
+
+<h3>Sports Quiz</h3>
+
+<p id="question"></p>
+
+<div id="answers"></div>
+
+<p id="result"></p>
+
+</div>
+
+
+<footer>
+
+SportsVerse © 2026
+
+</footer>
+
+
+<script>
+
+/* ---------- SPORTS DATA ---------- */
+
+const sports = {
+
+Football:{
+rules:"11 players per team score goals using feet.",
+tournaments:"FIFA World Cup, Champions League",
+countries:"Brazil, Germany, Argentina",
+players:["Messi","Ronaldo","Neymar"]
+},
+
+Cricket:{
+rules:"Two teams bat and bowl to score runs.",
+tournaments:"ICC World Cup, IPL",
+countries:"India, Australia, England",
+players:["Sachin Tendulkar","Virat Kohli","Joe Root"]
+},
+
+Basketball:{
+rules:"Score by shooting ball through hoop.",
+tournaments:"NBA, Olympics",
+countries:"USA, Spain",
+players:["Michael Jordan","LeBron James","Stephen Curry"]
+},
+
+Tennis:{
+rules:"Players hit ball across net with racket.",
+tournaments:"Wimbledon, US Open",
+countries:"Switzerland, Spain, Serbia",
+players:["Federer","Nadal","Djokovic"]
+}
+
+};
+
+
+/* ---------- CREATE SPORTS CARDS ---------- */
+
+const grid = document.getElementById("sportsGrid");
+
+for(let sport in sports){
+
+const card = document.createElement("div");
+
+card.className="card";
+
+card.innerHTML=`<h2>${sport}</h2>`;
+
+card.onclick=()=>showSport(sport);
+
+grid.appendChild(card);
+
+}
+
+
+/* ---------- SHOW SPORT INFO ---------- */
+
+function showSport(name){
+
+let data=sports[name];
+
+document.getElementById("title").innerText=name;
+
+document.getElementById("rules").innerText=data.rules;
+
+document.getElementById("tournaments").innerText=data.tournaments;
+
+document.getElementById("countries").innerText=data.countries;
+
+let players=document.getElementById("players");
+
+players.innerHTML="";
+
+data.players.forEach(p=>{
+let div=document.createElement("div");
+div.className="player";
+div.innerText=p;
+players.appendChild(div);
+});
+
+document.getElementById("panel").style.display="block";
+
+}
+
+
+/* ---------- SEARCH ---------- */
+
+function searchSport(){
+
+let value=document.getElementById("search").value.toLowerCase();
+
+let cards=document.querySelectorAll(".card");
+
+cards.forEach(card=>{
+
+card.style.display=card.innerText.toLowerCase().includes(value)?"block":"none";
+
+});
+
+}
+
+
+/* ---------- THEME ---------- */
+
+function toggleTheme(){
+
+document.body.classList.toggle("light");
+
+}
+
+
+/* ---------- CHART ---------- */
+
+const ctx=document.getElementById("chart");
+
+new Chart(ctx,{
+
+type:'bar',
+
+data:{
+labels:["Football","Cricket","Basketball","Tennis"],
+datasets:[{
+label:"Global Popularity",
+data:[95,90,75,70]
+}]
+}
+
+});
+
+
+/* ---------- QUIZ ---------- */
+
+const quizData=[
+
+{
+q:"Which country won most Cricket World Cups?",
+a:["India","Australia","England"],
+correct:1
+},
+
+{
+q:"Who has most Ballon d'Or?",
+a:["Messi","Ronaldo","Modric"],
+correct:0
+}
+
+];
+
+let index=0;
+
+function loadQuiz(){
+
+let q=quizData[index];
+
+document.getElementById("question").innerText=q.q;
+
+let answers=document.getElementById("answers");
+
+answers.innerHTML="";
+
+q.a.forEach((ans,i)=>{
+
+let btn=document.createElement("button");
+
+btn.innerText=ans;
+
+btn.onclick=()=>checkAnswer(i);
+
+answers.appendChild(btn);
+
+});
+
+}
+
+function checkAnswer(i){
+
+let q=quizData[index];
+
+document.getElementById("result").innerText=i===q.correct?"Correct!":"Wrong!";
+
+index++;
+
+if(index<quizData.length)
+
+setTimeout(loadQuiz,1000);
+
+}
+
+loadQuiz();
+
+</script>
+
+</body>
+</html>
+```
